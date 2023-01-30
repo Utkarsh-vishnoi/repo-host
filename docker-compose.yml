@@ -49,6 +49,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.portainer.rule=Host(`portainer.utkarsh.cloudns.asia`)
       - traefik.http.routers.portainer.entrypoints=websecure
+      - traefik.http.routers.portainer.middlewares=authelia@docker
       - traefik.http.routers.portainer.tls=true
       - traefik.http.routers.portainer.tls.certresolver=ca
       - traefik.http.services.portainer.loadbalancer.server.port=9000
@@ -85,10 +86,28 @@ services:
       - traefik.enable=true
       - traefik.http.routers.jenkins.rule=Host(`jenkins.utkarsh.cloudns.asia`)
       - traefik.http.routers.jenkins.entrypoints=websecure
-      # - traefik.http.routers.jenkins.middlewares=simpleAuth@file
+      - traefik.http.routers.jenkins.middlewares=authelia@docker
       - traefik.http.routers.jenkins.tls=true
       - traefik.http.routers.jenkins.tls.certresolver=ca
       - traefik.http.services.jenkins.loadbalancer.server.port=8080
+
+  authelia:
+    container_name: authelia
+    image: authelia/authelia
+    restart: unless-stopped
+    environment:
+      TZ: "Asia/Calcutta"
+    volumes:
+    - ./storage/authelia-volume:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.authelia.rule=Host(`auth.utkarsh.cloudns.asia`)
+      - traefik.http.routers.authelia.entrypoints=websecure
+      - traefik.http.routers.authelia.tls=true
+      - traefik.http.routers.authelia.tls.certresolver=ca
+      - traefik.http.middlewares.authelia.forwardAuth.address=http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.utkarsh.cloudns.asia%2F
+      - traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader=true
+      - traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email
 
 networks:
   default:
