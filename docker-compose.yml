@@ -59,6 +59,7 @@ services:
   traefik:
     image: traefik:latest
     container_name: traefik
+    restart: always
     ports:
       - 80:80
       - 443:443
@@ -75,7 +76,7 @@ services:
       args:
           HOST_UID: 1001
           HOST_GID: 999
-    restart: unless-stopped
+    restart: always
     container_name: jenkins
     environment:
       - "JAVA_OPTS=-Xmx3g -Xms2G"
@@ -94,7 +95,7 @@ services:
   authelia:
     container_name: authelia
     image: authelia/authelia
-    restart: unless-stopped
+    restart: always
     environment:
       TZ: "Asia/Calcutta"
     volumes:
