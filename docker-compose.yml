@@ -16,7 +16,7 @@ services:
       - traefik.http.routers.gitea.tls.certresolver=ca
       - traefik.http.services.gitea.loadbalancer.server.port=3000
     volumes:
-      - ./storage/gitea-volume:/data
+      - ~/storage/gitea-volume:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     # ports:
@@ -38,8 +38,8 @@ services:
       - traefik.http.routers.registry.tls=true
       - traefik.http.routers.registry.tls.certresolver=ca
     volumes:
-      - ./storage/registry-volume/auth:/auth
-      - ./storage/registry-volume/storage:/var/lib/registry
+      - ~/storage/registry-volume/auth:/auth
+      - ~/storage/registry-volume/storage:/var/lib/registry
 
   portainer:
     container_name: portainer
@@ -54,7 +54,7 @@ services:
       - traefik.http.routers.portainer.tls.certresolver=ca
       - traefik.http.services.portainer.loadbalancer.server.port=9000
     volumes:
-      - ./storage/portainer-volume:/data
+      - ~/storage/portainer-volume:/data
 
   traefik:
     image: traefik:latest
@@ -65,9 +65,9 @@ services:
       - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./storage/traefik-volume/acme.json:/acme.json
-      - ./storage/traefik-volume/dynamic_config.toml:/dynamic/traefik.toml
-      - ./storage/traefik-volume/static_config.toml:/traefik.toml
+      - ~/storage/traefik-volume/acme.json:/acme.json
+      - ~/storage/traefik-volume/dynamic_config.toml:/dynamic/traefik.toml
+      - ~/storage/traefik-volume/static_config.toml:/traefik.toml
 
   jenkins:
     build:
@@ -81,7 +81,7 @@ services:
       - "JAVA_OPTS=-Xmx3g -Xms2G"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./storage/jenkins-volume/storage:/var/jenkins_home
+      - ~/storage/jenkins-volume/storage:/var/jenkins_home
     labels:
       - traefik.enable=true
       - traefik.http.routers.jenkins.rule=Host(`jenkins.utkarsh.cloudns.asia`)
@@ -98,7 +98,7 @@ services:
     environment:
       TZ: "Asia/Calcutta"
     volumes:
-    - ./storage/authelia-volume:/config
+    - ~/storage/authelia-volume:/config
     labels:
       - traefik.enable=true
       - traefik.http.routers.authelia.rule=Host(`auth.utkarsh.cloudns.asia`)
